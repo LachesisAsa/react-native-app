@@ -1,20 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from "react";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
+import { RootSiblingParent } from "react-native-root-siblings";
+import Main from "./components/Main";
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    "Roboto-Bold": require("./assets/Fonts/Roboto-Bold.ttf"),
+    "Roboto-Medium": require("./assets/Fonts/Roboto-Medium.ttf"),
+    "Roboto-Regular": require("./assets/Fonts/Roboto-Regular.ttf"),
+  });
+
+  useEffect(() => {
+    async function prepare() {
+      await SplashScreen.preventAutoHideAsync();
+    }
+    prepare();
+  }, []);
+
+  if (!fontsLoaded) {
+    return null;
+  } else {
+    SplashScreen.hideAsync();
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <RootSiblingParent>
+        <Main />
+      </RootSiblingParent>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
