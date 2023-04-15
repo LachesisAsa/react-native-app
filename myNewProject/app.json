@@ -13,9 +13,15 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "useNextNotificationsApi": true,
+      "forceWareRendering": true,
+      "useHermes": true,
       "supportsTablet": true
     },
     "android": {
+      "useNextNotificationsApi": true,
+      "forceWareRendering": true,
+      "useHermes": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

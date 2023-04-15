@@ -76,7 +76,7 @@ export default function LoginScreen({ navigation }) {
                 paddingBottom: isShowKeyboard ? 0 : 132,
               }}
             >
-              <Text style={styles.title}>Войти</Text>
+              <Text style={styles.title}>Увійти</Text>
               <View
                 style={{
                   ...styles.formContainer,
@@ -131,7 +131,7 @@ export default function LoginScreen({ navigation }) {
                         navigation.navigate("RegistrationScreen");
                       }}
                     >
-                      <Text style={styles.bottomText}>Зареєструватися тут</Text>
+                      <Text style={styles.bottomText}>Зареєструватися</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -167,7 +167,6 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Roboto-Bold",
     fontSize: 30,
-    //  lineHeight: "1.17",
     marginBottom: 33,
     textAlign: "center",
   },
@@ -207,13 +206,11 @@ const styles = StyleSheet.create({
   btnTitle: {
     fontFamily: "Roboto-Regular",
     fontSize: 16,
-    //  lineHeight: 1.19,
     color: "#ffffff",
   },
   bottomText: {
     fontFamily: "Roboto-Regular",
     fontSize: 16,
-    //  lineHeight: 1.18,
     textAlign: "center",
     color: "#1B4371",
   },
