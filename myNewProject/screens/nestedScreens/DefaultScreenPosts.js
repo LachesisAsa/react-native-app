@@ -30,6 +30,7 @@ export default function DefaultScreenPosts({ route, navigation }) {
   const [error, setError] = useState(null);
   const isLoading = useSelector(selectIsLoading);
   const errorMessage = useSelector(selectError);
+
   const [posts, setPosts] = useState([]);
   const dispatch = useDispatch();
 

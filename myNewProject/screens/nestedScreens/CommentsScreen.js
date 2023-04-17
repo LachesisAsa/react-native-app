@@ -120,6 +120,7 @@ export default function CommentsScreen({ route }) {
             keyboardVerticalOffset={-50}
           >
             <Image style={styles.image} source={{ uri: photo }} />
+
             <View style={{ height: isShowKeyboard ? 0 : 330 }}>
               <SafeAreaView style={{ flex: 1 }}>
                 <FlatList
@@ -129,14 +130,14 @@ export default function CommentsScreen({ route }) {
                 />
               </SafeAreaView>
             </View>
-            
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: isShowKeyboard ? "flex-start" : "flex-end",
-                }}
-              >
-                <View style={styles.commentForm}>
+
+            <View
+              style={{
+                flex: 1,
+                justifyContent: isShowKeyboard ? "flex-start" : "flex-end",
+              }}
+            >
+              <View style={styles.commentForm}>
                 <TextInput
                   style={styles.input}
                   placeholder="Додати коментар..."

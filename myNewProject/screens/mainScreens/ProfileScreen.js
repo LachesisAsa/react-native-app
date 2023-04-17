@@ -82,6 +82,7 @@ export default function ProfileScreen({ navigation }) {
                   <EvilIcons name="close" size={24} color="#BDBDBD" />
                 </TouchableOpacity>
               </View>
+
               <TouchableOpacity style={styles.logOutIcon} onPress={signOut}>
                 <Feather name="log-out" size={24} color="#BDBDBD" />
               </TouchableOpacity>
@@ -154,16 +155,16 @@ export default function ProfileScreen({ navigation }) {
                             </TouchableOpacity>
                           </View>
                         </View>
-                       );
-                      }}
-                    />
-                  </SafeAreaView>
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.navigate("CreatePostsScreen");
+                      );
+                    }}
+                  />
+                </SafeAreaView>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("CreatePostsScreen");
                   }}
-                  >
+                >
                   <Text style={styles.bodyText}>
                     Додати перший пост в колекцію!
                   </Text>

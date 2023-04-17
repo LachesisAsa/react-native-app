@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
+import { AntDesign } from "@expo/vector-icons";
 import {
   StyleSheet,
   Text,
@@ -13,8 +15,6 @@ import {
   KeyboardAvoidingView,
   Image,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import image from "../../assets/register-bg.jpg";
 import { register } from "../../redux/auth/authOperations";
@@ -153,7 +153,7 @@ export default function RegistrationScreen({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={{ ...styles.container, width: dimensions }}>
-        {!error && !load && !isLoading && !errorMessage &&(
+        {!error && !load && !isLoading && !errorMessage && (
           <>
             <ImageBackground source={image} style={styles.image}>
               <KeyboardAvoidingView
@@ -163,7 +163,7 @@ export default function RegistrationScreen({ navigation }) {
                 <View
                   style={{
                     ...styles.form,
-                    paddingBottom: isShowKeyboard ? 0 : 66
+                    paddingBottom: isShowKeyboard ? 0 : 66,
                   }}
                 >
                   <View style={styles.userImage}>
@@ -194,7 +194,7 @@ export default function RegistrationScreen({ navigation }) {
                   <View
                     style={{
                       ...styles.formContainer,
-                      marginBottom: isShowKeyboard ? 32 : 43
+                      marginBottom: isShowKeyboard ? 32 : 43,
                     }}
                   >
                     <TextInput
@@ -284,7 +284,7 @@ export default function RegistrationScreen({ navigation }) {
             <Text>Loading...</Text>
           </View>
         )}
-        {!load && error (error || errorMessage) && !isLoading && (
+        {!load && (error || errorMessage) && !isLoading && (
           <View
             style={{
               flex: 1,
