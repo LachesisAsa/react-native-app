@@ -15,6 +15,8 @@ import { logOut } from "../../redux/auth/authOperations";
 import {
   selectAuthEmail,
   selectAvatar,
+  selectError,
+  selectIsLoading,
   selectUserName,
 } from "../../redux/auth/authSelectors";
 import { db } from "../../firebase/config";
@@ -26,7 +28,8 @@ export default function DefaultScreenPosts({ route, navigation }) {
   const name = useSelector(selectUserName);
   const [load, setLoad] = useState(false);
   const [error, setError] = useState(null);
-
+  const isLoading = useSelector(selectIsLoading);
+  const errorMessage = useSelector(selectError);
   const [posts, setPosts] = useState([]);
   const dispatch = useDispatch();
 
@@ -50,7 +53,7 @@ export default function DefaultScreenPosts({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      {!error && !load && (
+      {!error && !load && !errorMessage && !isLoading && (
         <>
           <View style={styles.topContainer}>
             <Text style={styles.textTop}>Публікації</Text>
@@ -149,14 +152,14 @@ export default function DefaultScreenPosts({ route, navigation }) {
           </View>
         </>
       )}
-      {load && (
+      {(load || isLoading) && (
         <View
           style={{ flex: 1, alignContent: "center", justifyContent: "center" }}
         >
           <Text>Loading...</Text>
         </View>
       )}
-      {!load && error && (
+      {!load && (error || errorMessage) && !isLoading && (
         <View
           style={{ flex: 1, alignContent: "center", justifyContent: "center" }}
         >

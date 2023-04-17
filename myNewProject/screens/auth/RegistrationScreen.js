@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
-import { AntDesign } from "@expo/vector-icons";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,12 +13,15 @@ import {
   KeyboardAvoidingView,
   Image,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import image from "../../assets/register-bg.jpg";
 import { register } from "../../redux/auth/authOperations";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { storage } from "../../firebase/config";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { selectError, selectIsLoading } from "../../redux/auth/authSelectors";
 
 const initialState = {
   login: "",
@@ -32,6 +33,7 @@ const initialState = {
 const windowDimensions = Dimensions.get("window").width;
 
 export default function RegistrationScreen({ navigation }) {
+  const [hasPermission, setHasPermission] = useState(null);
   const [dimensions, setDimensions] = useState(windowDimensions);
   const [isNotShownPassword, setIsNotShownPassword] = useState(true);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -39,6 +41,8 @@ export default function RegistrationScreen({ navigation }) {
   const { login, email, password, avatar } = state;
   const [load, setLoad] = useState(false);
   const [error, setError] = useState(null);
+  const isLoading = useSelector(selectIsLoading);
+  const errorMessage = useSelector(selectError);
 
   const dispatch = useDispatch();
 
@@ -149,7 +153,7 @@ export default function RegistrationScreen({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={{ ...styles.container, width: dimensions }}>
-        {!error && !load && (
+        {!error && !load && !isLoading && !errorMessage &&(
           <>
             <ImageBackground source={image} style={styles.image}>
               <KeyboardAvoidingView
@@ -159,7 +163,7 @@ export default function RegistrationScreen({ navigation }) {
                 <View
                   style={{
                     ...styles.form,
-                    paddingBottom: isShowKeyboard ? 0 : 66,
+                    paddingBottom: isShowKeyboard ? 0 : 66
                   }}
                 >
                   <View style={styles.userImage}>
@@ -190,7 +194,7 @@ export default function RegistrationScreen({ navigation }) {
                   <View
                     style={{
                       ...styles.formContainer,
-                      marginBottom: isShowKeyboard ? 32 : 43,
+                      marginBottom: isShowKeyboard ? 32 : 43
                     }}
                   >
                     <TextInput
@@ -269,7 +273,7 @@ export default function RegistrationScreen({ navigation }) {
             <StatusBar style="auto" />
           </>
         )}
-        {load && (
+        {(load || isLoading) && (
           <View
             style={{
               flex: 1,
@@ -280,7 +284,7 @@ export default function RegistrationScreen({ navigation }) {
             <Text>Loading...</Text>
           </View>
         )}
-        {!load && error && (
+        {!load && error (error || errorMessage) && !isLoading && (
           <View
             style={{
               flex: 1,

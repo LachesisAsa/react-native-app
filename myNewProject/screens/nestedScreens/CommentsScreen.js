@@ -11,6 +11,7 @@ import {
   FlatList,
   SafeAreaView,
   Text,
+  KeyboardAvoidingView,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -33,19 +34,15 @@ import {
 
 export default function CommentsScreen({ route }) {
   const [text, setText] = useState("");
-  const [comments, setComments] = useState([]);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [comments, setComments] = useState([]);
   const userId = useSelector(selectUserId);
   const userName = useSelector(selectUserName);
   const avatar = useSelector(selectAvatar);
   const { postId, photo } = route.params;
   const [load, setLoad] = useState(false);
   const [error, setError] = useState(null);
-
-  const keyboardHide = () => {
-    Keyboard.dismiss();
-    setIsShowKeyboard(false);
-  };
+  console.log(isShowKeyboard);
 
   const createPost = () => {
     sendComment();
@@ -97,21 +94,33 @@ export default function CommentsScreen({ route }) {
     }
   };
 
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
+
+  const onFocus = () => {
+    setIsShowKeyboard(true);
+  };
+
   useEffect(() => {
     fetchComments();
   }, []);
 
   const renderItem = ({ item }) => {
-    return <CommentItem item={item} isShowKeyboard={isShowKeyboard} />;
+    return <CommentItem item={item} />;
   };
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
         {!error && !load && (
-          <>
+          <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={-50}
+          >
             <Image style={styles.image} source={{ uri: photo }} />
-            <View style={{ height: 250 }}>
+            <View style={{ height: isShowKeyboard ? 0 : 330 }}>
               <SafeAreaView style={{ flex: 1 }}>
                 <FlatList
                   data={comments}
@@ -120,14 +129,20 @@ export default function CommentsScreen({ route }) {
                 />
               </SafeAreaView>
             </View>
-
-            <View style={styles.formContainer}>
-              <View style={styles.commentForm}>
+            
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: isShowKeyboard ? "flex-start" : "flex-end",
+                }}
+              >
+                <View style={styles.commentForm}>
                 <TextInput
                   style={styles.input}
                   placeholder="Додати коментар..."
                   value={text}
                   onChangeText={setText}
+                  onFocus={onFocus}
                 />
                 <TouchableOpacity style={styles.sendBtn} onPress={createPost}>
                   <MaterialCommunityIcons
@@ -138,15 +153,27 @@ export default function CommentsScreen({ route }) {
                 </TouchableOpacity>
               </View>
             </View>
-          </>
+          </KeyboardAvoidingView>
         )}
         {load && (
-          <View style={{flex: 1, alignContent: "center", justifyContent: "center" }}>
+          <View
+            style={{
+              flex: 1,
+              alignContent: "center",
+              justifyContent: "center",
+            }}
+          >
             <Text>Loading...</Text>
           </View>
         )}
         {!load && error && (
-          <View style={{flex: 1, alignContent: "center", justifyContent: "center" }}>
+          <View
+            style={{
+              flex: 1,
+              alignContent: "center",
+              justifyContent: "center",
+            }}
+          >
             <Text>{error}</Text>
           </View>
         )}
@@ -167,10 +194,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width - 32,
     borderRadius: 8,
     backgroundColor: "#E8E8E8",
-  },
-  formContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
   },
   commentForm: {
     position: "relative",

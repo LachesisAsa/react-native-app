@@ -18,6 +18,8 @@ import { useDispatch, useSelector } from "react-redux";
 import image from "../../assets/register-bg.jpg";
 import {
   selectAvatar,
+  selectError,
+  selectIsLoading,
   selectUserId,
   selectUserName,
 } from "../../redux/auth/authSelectors";
@@ -35,6 +37,8 @@ export default function ProfileScreen({ navigation }) {
   const userName = useSelector(selectUserName);
   const avatar = useSelector(selectAvatar);
   const dispatch = useDispatch();
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
 
   const signOut = () => {
     console.log("exit");
@@ -61,111 +65,134 @@ export default function ProfileScreen({ navigation }) {
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <ImageBackground source={image} style={styles.image}>
         <View style={styles.container}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-          >
-            <View style={styles.avatar}>
-              {avatar ? (
-                <Image style={styles.uploadAvatar} source={{ uri: avatar }} />
-              ) : (
-                <View style={styles.uploadAvatar}></View>
-              )}
-              <TouchableOpacity
-                style={styles.deleteAvatarIcon}
-                onPress={deleteAvatarFromUser}
-              >
-                <EvilIcons name="close" size={24} color="#BDBDBD" />
+          {!isLoading && !error && (
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+            >
+              <View style={styles.avatar}>
+                {avatar ? (
+                  <Image style={styles.uploadAvatar} source={{ uri: avatar }} />
+                ) : (
+                  <View style={styles.uploadAvatar}></View>
+                )}
+                <TouchableOpacity
+                  style={styles.deleteAvatarIcon}
+                  onPress={deleteAvatarFromUser}
+                >
+                  <EvilIcons name="close" size={24} color="#BDBDBD" />
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity style={styles.logOutIcon} onPress={signOut}>
+                <Feather name="log-out" size={24} color="#BDBDBD" />
               </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity style={styles.logOutIcon} onPress={signOut}>
-              <Feather name="log-out" size={24} color="#BDBDBD" />
-            </TouchableOpacity>
-            <View style={styles.header}>
-              <Text style={styles.headerText}>{userName}</Text>
-            </View>
-            {posts.length >= 1 ? (
-              <SafeAreaView style={{ marginHorizontal: 16 }}>
-                <FlatList
-                  data={posts}
-                  keyExtractor={posts.id}
-                  renderItem={({ item }) => {
-                    return (
-                      <View style={{ marginBottom: 34 }}>
-                        <Image
-                          style={styles.imagePost}
-                          source={{ uri: item.photo }}
-                        />
-                        <Text
-                          style={{
-                            ...styles.placeName,
-                            fontFamily: "Roboto-Medium",
-                          }}
-                        >
-                          {item.placeName}
-                        </Text>
-                        <View style={styles.locationCommentContainer}>
-                          <TouchableOpacity
-                            onPress={() =>
-                              navigation.navigate("CommentsScreen", {
-                                postId: item.id,
-                                photo: item.photo,
-                              })
-                            }
+              <View style={styles.header}>
+                <Text style={styles.headerText}>{userName}</Text>
+              </View>
+              {posts.length >= 1 ? (
+                <SafeAreaView style={{ marginHorizontal: 16 }}>
+                  <FlatList
+                    data={posts}
+                    keyExtractor={posts.id}
+                    renderItem={({ item }) => {
+                      return (
+                        <View style={{ marginBottom: 34 }}>
+                          <Image
+                            style={styles.imagePost}
+                            source={{ uri: item.photo }}
+                          />
+                          <Text
+                            style={{
+                              ...styles.placeName,
+                              fontFamily: "Roboto-Medium",
+                            }}
                           >
-                            <View style={styles.commentContainer}>
-                              <EvilIcons
-                                style={styles.commentLogo}
-                                name="comment"
-                                size={24}
-                                color="black"
-                              />
-                              <Text style={styles.commentAmount}>
-                                {item.comments}
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            onPress={() =>
-                              navigation.navigate("MapScreen", {
-                                location: item.location,
-                              })
-                            }
-                          >
-                            <View style={styles.location}>
-                              <EvilIcons
-                                name="location"
-                                size={24}
-                                color="black"
-                              />
-                              <Text
-                                style={{
-                                  ...styles.locationText,
-                                  fontFamily: "Roboto-Regular",
-                                }}
-                              >
-                                {item.placeName}
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
+                            {item.placeName}
+                          </Text>
+                          <View style={styles.locationCommentContainer}>
+                            <TouchableOpacity
+                              onPress={() =>
+                                navigation.navigate("CommentsScreen", {
+                                  postId: item.id,
+                                  photo: item.photo,
+                                })
+                              }
+                            >
+                              <View style={styles.commentContainer}>
+                                <EvilIcons
+                                  style={styles.commentLogo}
+                                  name="comment"
+                                  size={24}
+                                  color="black"
+                                />
+                                <Text style={styles.commentAmount}>
+                                  {item.comments}
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={() =>
+                                navigation.navigate("MapScreen", {
+                                  location: item.location,
+                                })
+                              }
+                            >
+                              <View style={styles.location}>
+                                <EvilIcons
+                                  name="location"
+                                  size={24}
+                                  color="black"
+                                />
+                                <Text
+                                  style={{
+                                    ...styles.locationText,
+                                    fontFamily: "Roboto-Regular",
+                                  }}
+                                >
+                                  {item.placeName}
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
+                          </View>
                         </View>
-                      </View>
-                    );
+                       );
+                      }}
+                    />
+                  </SafeAreaView>
+                ) : (
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("CreatePostsScreen");
                   }}
-                />
-              </SafeAreaView>
-            ) : (
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("CreatePostsScreen");
-                }}
-              >
-                <Text style={styles.bodyText}>
-                  Додати перший пост в колекцію!
-                </Text>
-              </TouchableOpacity>
-            )}
-          </KeyboardAvoidingView>
+                  >
+                  <Text style={styles.bodyText}>
+                    Додати перший пост в колекцію!
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </KeyboardAvoidingView>
+          )}
+          {isLoading && (
+            <View
+              style={{
+                flex: 1,
+                alignContent: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text>Loading...</Text>
+            </View>
+          )}
+          {!isLoading && error && (
+            <View
+              style={{
+                flex: 1,
+                alignContent: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text>{error}</Text>
+            </View>
+          )}
         </View>
       </ImageBackground>
     </TouchableWithoutFeedback>

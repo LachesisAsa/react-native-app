@@ -9,12 +9,19 @@ import {
 import Toast from "react-native-root-toast";
 import { authSlice } from "./authReducer";
 
-const { authSignOut, updateUserProfile, authStateChange } = authSlice.actions;
+const {
+  authSignOut,
+  updateUserProfile,
+  authStateChange,
+  fetchingError,
+  fetchingInProgress,
+} = authSlice.actions;
 
 export const register =
   ({ email, password, login, avatar }) =>
   async (dispatch, getState) => {
     try {
+      dispatch(fetchingInProgress());
       const response = await createUserWithEmailAndPassword(
         authFirebase,
         email,
@@ -46,6 +53,7 @@ export const register =
       dispatch(updateUserProfile(userUpdateProfile));
     } catch (error) {
       console.log("error.message", error.message);
+      dispatch(fetchingError(error.message));
     }
   };
 
@@ -53,6 +61,7 @@ export const signIn =
   ({ email, password }) =>
   async (dispatch, getState) => {
     try {
+      dispatch(fetchingInProgress());
       const user = await signInWithEmailAndPassword(
         authFirebase,
         email,
@@ -75,14 +84,14 @@ export const signIn =
         position: 50,
       });
     } catch (error) {
-      console.log("error", error);
-      console.log("error.code", error.code);
+      dispatch(fetchingError(error.message));
       console.log("error.message", error.message);
     }
   };
 
 export const deleteAvatar = () => async (dispatch, getState) => {
   try {
+    dispatch(fetchingInProgress());
     console.log(authFirebase.currentUser);
     await updateProfile(authFirebase.currentUser, {
       displayName,
@@ -109,14 +118,14 @@ export const deleteAvatar = () => async (dispatch, getState) => {
       position: 50,
     });
   } catch (error) {
-    console.log("error", error);
-    console.log("error.code", error.code);
+    dispatch(fetchingError(error.message));
     console.log("error.message", error.message);
   }
 };
 
 export const logOut = () => async (dispatch, getState) => {
   try {
+    dispatch(fetchingInProgress());
     await signOut(authFirebase);
     dispatch(authSignOut());
 
@@ -126,21 +135,27 @@ export const logOut = () => async (dispatch, getState) => {
     });
   } catch (error) {
     console.log("error", error);
+    dispatch(fetchingError(error.message));
   }
 };
 
 export const authStateChangeUser = () => async (dispatch, getState) => {
-  await onAuthStateChanged(authFirebase, (user) => {
-    if (user) {
-      const userUpdateProfile = {
-        userName: user.displayName,
-        userId: user.uid,
-        userAvatar: user.photoURL,
-        userEmail: user.email,
-      };
-
-      dispatch(authStateChange({ stateChange: true }));
-      dispatch(updateUserProfile(userUpdateProfile));
-    }
-  });
+  try {
+    await onAuthStateChanged(authFirebase, (user) => {
+      if (user) {
+        const userUpdateProfile = {
+          userName: user.displayName,
+          userId: user.uid,
+          userAvatar: user.photoURL,
+          userEmail: user.email,
+        };
+        dispatch(fetchingInProgress());
+        dispatch(authStateChange({ stateChange: true }));
+        dispatch(updateUserProfile(userUpdateProfile));
+      }
+    });
+  } catch (error) {
+    dispatch(fetchingError(error.message));
+    console.log("error", error.message);
+  }
 };
